@@ -1,0 +1,24 @@
+Renombra y extrae los archivos de video que estan dentro de una carpeta con su nombre, los archivos de subtitulos solo los extrae y el resto los elimina.
+
+Debes indicarle la carpeta padre que contiene el resto de carpetas con los archivos
+### ANTES  ###
+Carpeta_padre
+	|------Nombre1
+	|	|----archivo1.mkv
+	|	|----sub1.srt
+	|------Nombre2
+	|	|----archivo2.avi
+	|	|----sub2.srt
+	|	|----archivo.doc
+
+### DESPUES ###	
+Carpeta_padre
+	|------Nombre1.mkv
+	|------sub1.srt	
+	|------Nombre2.avi
+	|------sub2.srt
+	|
+
+
+
+Ricardo Montaner 23/11/2015
