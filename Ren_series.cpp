@@ -30,59 +30,85 @@ static string extension3 = "mkv";
 
 int main()
 {
-
 	/**Definicion de valiables */
 	string ruta, rutaDir, aux, aux2, carpeta,carpeta2, fichero;
+	string fviejo, fnuevo, comando_mover, comando_eliminar;
     vector <string> NombreCarpetas;
     vector <string> NombreFichero;
     string char1, char2, char3, fichExt;
 
+    do {
+        cout << "Escribe la ruta de la carpeta padre: " << endl;					  //Pedimos la ruta de la carpeta
+        cin >> ruta;															      //Introducen la ruta
+        rutaDir = ruta + "\\*";
 
-	cout << "Escribe la ruta de la carpeta padre: " << endl;					  //Pedimos la ruta de la carpeta
-	cin >> ruta;															      //Introducen la ruta
-	rutaDir = ruta + "\\*";
-    cout << rutaDir <<endl;
-    NombreCarpetas = NombreArchivosEnDirectorio( rutaDir );
+        NombreCarpetas = NombreArchivosEnDirectorio( rutaDir );
+        if (NombreCarpetas.size() == 0){cerr << "Esa carpeta no existe o no es accesible." <<endl;}
+    }while(NombreCarpetas.size() == 0);
 
     for (int i = 0; i < NombreCarpetas.size(); i++ ){                            //Leemos el array
-       carpeta = NombreCarpetas[i];
-       if (carpeta != "..") {
-           carpeta2 = ruta + "\\" + carpeta + "\\*";         //  B:\Gotham\"Gothan 1x03\*"
-           cout << carpeta2 <<endl;
-           NombreFichero = NombreArchivosEnDirectorio ( carpeta2 );
-           if (NombreFichero.size() == 0 ) {cerr << "error" <<endl;}
-           else
-           for (int i = 0; i < NombreFichero.size(); i++){
-            fichero = NombreFichero[i];
-            //cout << fichero <<endl;
-            char1 = fichero[fichero.length()-3];
-            char2 = fichero[fichero.length()-2];
-            char3 = fichero[fichero.length()-1];
-            fichExt = char1+char2+char3; // Sacamos la extension del fichero
-            cout << fichExt <<endl;
-            if (fichero != ".."){
-            if (fichExt == extension1 || fichExt == extension2 || fichExt == extension3){
-                aux = ruta + "\\\"" + carpeta + "\\*\"";              /**  B:\Gotham\"Gothan 1x03\*"  */
-                aux2 = "rename " + aux + " \"" + carpeta + "." + fichExt + "\""; /** rename B:\Gotham\"Gothan 1x03\*"  "Gothan 1x03.mkv" */
+        carpeta = NombreCarpetas[i];
+        if (carpeta != "..") {
+               carpeta2 = ruta + "\\" + carpeta + "\\*";         //  B:\Gotham\"Gothan 1x03\*"
+               // cout << carpeta2 <<endl;
+               NombreFichero = NombreArchivosEnDirectorio ( carpeta2 );
+               if (NombreFichero.size() == 0 ) {cerr << "Error al listar los archivos." <<endl;}
+               else
+                   for (int i = 0; i < NombreFichero.size(); i++){
+                       fichero = NombreFichero[i];
+                       char1 = fichero[fichero.length()-3];
+                       char2 = fichero[fichero.length()-2];
+                       char3 = fichero[fichero.length()-1];
+                       fichExt = char1+char2+char3; // Sacamos la extension del fichero
+                       if (fichero != ".."){
+                       if (fichExt == extension1 || fichExt == extension2 || fichExt == extension3){
+                        //RENOMBRAMOS LOS CAPITULOS
+                           aux = ruta + "\\\"" + carpeta + "\\*." + fichExt + "\"";              /**  B:\Gotham\"Gothan 1x03\*.fichExt"  */
+                           aux2 = "rename " + aux + " \"" + carpeta + "." + fichExt + "\""; /** rename B:\Gotham\"Gothan 1x03\*.fichExt"  "Gothan 1x03.fichExt" */
 
-                char * cadena = new char[aux2.length() + 1];
-                strcpy(cadena, aux2.c_str());
+                           char * com_renombrar = new char[aux2.length() + 1];
+                           strcpy(com_renombrar, aux2.c_str());
 
-                system(cadena);
-            }else if (fichExt == "srt"){}
-                else {
-                    aux = ruta + "\\\"" + carpeta;                      /**  B:\Gotham\"Gothan 1x03  */
-                    aux2 = "del " + aux + "\\*." + fichExt + "\""; /** del B:\Gotham\"Gothan 1x03\Gothan 1x03.fichExt" */
-                    char * cadena = new char[aux2.length() + 1];
-                    strcpy(cadena, aux2.c_str());
-                    system(cadena);
-                }
-           }
-           }
+                           system(com_renombrar);                // Renombra el archivo
+
+                        //MOVEMOS LOS CAPITULOS
+                           fviejo = ruta + "\\\"" + carpeta + "\\" + carpeta + "." + fichExt + "\""; //B:\Gotham\"Gothan 1x03\Gothan 1x03.fichExt"
+                           fnuevo = ruta + "\\\"" + carpeta + "." + fichExt + "\"";
+                           comando_mover = "move " + fviejo + " " + fnuevo;
+
+                           char * com_mover = new char[comando_mover.length() + 1];
+                           strcpy(com_mover, comando_mover.c_str());
+
+                           system(com_mover);                   // Mueve el archivo
+
+                       }else if (fichExt == "srt"){
+                        //MOVEMOS LOS SUBTITULOS
+                            fviejo = ruta + "\\\"" + carpeta + "\\*.srt\""; //B:\Gotham\"Gothan 1x03\*.srt"
+                            fnuevo = ruta + "\\\"" + fichero + "\"";
+                            comando_mover = "move " + fviejo + " " + fnuevo;
+
+                            char * com_mover = new char[comando_mover.length() + 1];
+                            strcpy(com_mover, comando_mover.c_str());
+
+                            system(com_mover);                   // Mueve el archivo
+                       }
+                       else {
+                       // ELIMINAMOS LO SOBRANTE
+                           aux = ruta + "\\\"" + carpeta;                      /**  B:\Gotham\"Gothan 1x03  */
+                           aux2 = "del " + aux + "\\*." + fichExt + "\""; /** del B:\Gotham\"Gothan 1x03\Gothan 1x03.fichExt" */
+                           char * com_eliminar = new char[aux2.length() + 1];
+                           strcpy(com_eliminar, aux2.c_str());
+                           system(com_eliminar);            //Elimina el archivo
+                       }
+                       }
+                   }
+            }
+
         }
-
-    }
-    cout << "Todo Renombrado." <<endl;
+    cout << "Todo Renombrado o Eliminado." <<endl;
 
 }
+
+
+
 
