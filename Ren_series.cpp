@@ -72,14 +72,14 @@ void modificarArchivo (string fichero){
 
         system(com_mover);                   // Mueve el archivo
     }
-    else {
+    /*else {
     // ELIMINAMOS LO SOBRANTE
-        aux = ruta + "\\\"" + carpeta;                      /**  B:\Gotham\"Gothan 1x03  */
-        aux2 = "del " + aux + "\\*." + fichExt + "\""; /** del B:\Gotham\"Gothan 1x03\Gothan 1x03.fichExt" */
+        aux = ruta + "\\\"" + carpeta;                      /**  B:\Gotham\"Gothan 1x03  
+        aux2 = "del " + aux + "\\*." + fichExt + "\""; /** del B:\Gotham\"Gothan 1x03\Gothan 1x03.fichExt" 
         char * com_eliminar = new char[aux2.length() + 1];
         strcpy(com_eliminar, aux2.c_str());
         system(com_eliminar);            //Elimina el archivo
-    }
+    }*/
     }
 }
 
